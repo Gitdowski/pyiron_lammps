@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from typing import Optional, Union
 
 import numpy as np
-from ase.atoms import Atoms
 
 
 @dataclass
