@@ -155,6 +155,10 @@ def lammps_file_interface_function(
     ]
 
     if calc_mode == "static":
+        if dump_final_structure:
+            raise ValueError(
+                "dump_final_structure is onlyt applicable for molecular dynamics (md) calculations."
+            )
         lmp_str_constraint_lst = [
             k + " " + v
             for k, v in set_selective_dynamics(
@@ -198,6 +202,10 @@ def lammps_file_interface_function(
                 + " append yes"
             ]
     elif calc_mode == "minimize":
+        if dump_final_structure:
+            raise ValueError(
+                "dump_final_structure is onlyt applicable for molecular dynamics (md) calculations."
+            )
         calc_kwargs["units"] = units
         lmp_str_constraint_lst = [
             k + " " + v
