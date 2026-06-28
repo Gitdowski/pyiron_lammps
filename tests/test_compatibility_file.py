@@ -183,11 +183,13 @@ class TestCompatibilityFile(unittest.TestCase):
             self.assertIn(line, content)
 
     def test_write_dump_if_missing_appends_command_when_not_divisible(self):
+        n_ionic_steps = 950
+        n_print = 100
         md_input = CalcMDInput(
             temperature=500.0,
             pressure=0.0,
-            n_ionic_steps=950,
-            n_print=100,
+            n_ionic_steps=n_ionic_steps,
+            n_print=n_print,
         )
         shell_output, parsed_output, job_crashed = lammps_file_interface_function(
             working_directory=self.working_dir,
@@ -202,7 +204,7 @@ class TestCompatibilityFile(unittest.TestCase):
             + str(os.path.join(self.static_path, "compatibility_output"))
             + "/* .",
             resource_path=os.path.join(self.static_path, "potential"),
-            write_dump_if_missing=True,
+            write_dump_if_missing=n_ionic_steps % n_print != 0,
         )
         self.assertFalse(job_crashed)
         with open(self.working_dir + "/lmp.in", "r") as f:
@@ -215,11 +217,13 @@ class TestCompatibilityFile(unittest.TestCase):
         )
 
     def test_write_dump_if_missing_skipped_when_divisible(self):
+        n_ionic_steps = 1000
+        n_print = 100
         md_input = CalcMDInput(
             temperature=500.0,
             pressure=0.0,
-            n_ionic_steps=1000,
-            n_print=100,
+            n_ionic_steps=n_ionic_steps,
+            n_print=n_print,
         )
         shell_output, parsed_output, job_crashed = lammps_file_interface_function(
             working_directory=self.working_dir,
@@ -234,7 +238,7 @@ class TestCompatibilityFile(unittest.TestCase):
             + str(os.path.join(self.static_path, "compatibility_output"))
             + "/* .",
             resource_path=os.path.join(self.static_path, "potential"),
-            write_dump_if_missing=True,
+            write_dump_if_missing=n_ionic_steps % n_print != 0,
         )
         self.assertFalse(job_crashed)
         with open(self.working_dir + "/lmp.in", "r") as f:

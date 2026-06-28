@@ -33,7 +33,7 @@ def lammps_file_interface_function(
     write_restart_file: bool = False,
     read_restart_file: bool = False,
     restart_file: str = "restart.out",
-    write_dump_if_missing: bool = False,
+    dump_final_structure: bool = False,
 ):
     """
     A single function to execute a LAMMPS calculation based on the LAMMPS job implemented in pyiron
@@ -86,11 +86,8 @@ def lammps_file_interface_function(
         write_restart_file (bool): enable writing the LAMMPS restart file
         read_restart_file (bool): enable loading the LAMMPS restart file
         restart_file (str): file name of the LAMMPS restart file to copy
-        write_dump_if_missing (bool): in "md" mode, append a ``write_dump`` command after the
-          ``run`` command to capture the final structure in ``dump.out`` when ``n_ionic_steps`` is
-          not evenly divisible by ``n_print`` - in that case the regular periodic ``dump`` command
-          skips the final step even though it is still reported in ``log.lammps``. Disabled by
-          default.
+        dump_final_structure (bool): in "md" mode, append a ``write_dump`` command after the ``run`` command to capture
+                                     the final structure in ``dump.out``  Disabled by default.
         executable_version (str): LAMMPS version to for the execution
         executable_path (str): path to the LAMMPS executable
         input_control_file (str|list|dict): Option to modify the LAMMPS input file directly
@@ -193,7 +190,7 @@ def lammps_file_interface_function(
             lmp_str_lst += ["reset_timestep 0"]
         lmp_str_lst += ["run {} ".format(n_ionic_steps)]
         n_print = calc_kwargs.get("n_print", 1)
-        if write_dump_if_missing and n_print and n_ionic_steps % n_print != 0:
+        if dump_final_structure:
             lmp_str_lst += [
                 "write_dump all custom dump.out "
                 + dump_fields
